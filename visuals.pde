@@ -14,6 +14,7 @@ class Note {
   int channel, velocity, pitch;
   PVector position;
   boolean dying = false;
+  color displayColor = color(0, 200, 200);
   
   Note(int channel_, int pitch_, int velocity_, int x_, int y_) {
     this.channel = channel_;
@@ -37,7 +38,9 @@ class Note {
   
   // display node on canvas
   void display() {
-   ellipse(this.position.x, this.position.y, this.size, this.size);
-    
+    // fade graphic as dying
+    float alpha = scaleVal(this.age, 0, this.maxAge, 255, 0);
+    fill(this.displayColor, alpha); 
+    ellipse(this.position.x, this.position.y, this.size, this.size);
   }
 }

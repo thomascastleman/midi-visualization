@@ -14,6 +14,9 @@ int maxPitch = 108;
 ArrayList<Note> notes = new ArrayList<Note>();  // all note objects
 ArrayList<Note> notesToAdd = new ArrayList<Note>(); // all notes that currently need to be added to notes
 
+ArrayList<Tuple> release = new ArrayList<Tuple>();  // note values currently being released
+ArrayList<Tuple> toRelease = new ArrayList<Tuple>(); // note values (channel, pitch...) to be released
+
 void setup() {
   size(700, 700);
   background(0);
@@ -21,10 +24,41 @@ void setup() {
 
   MidiBus.list(); // List all available Midi devices
   myBus = new MidiBus(this, 0, 3); // init MidiBus
+  
+  
+  //noLoop();
+  
+  //fill(255, 0, 0);
+  //ellipse(width / 2 + 45, height / 2 + 45, 100, 100);
+  
+  //fill(0, 255, 0, 100);
+  //ellipse(width / 2, height / 2, 100, 100);
+}
+
+// scale value from one range to another
+float scaleVal(int value, int oldMin, int oldMax, int newMin, int newMax) {
+  return (((float) (value - oldMin)) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
 }
 
 void draw() {
   background(0);
+  
+  // add all waiting releases
+  release.addAll(toRelease);
+  toRelease.clear();
+  
+  // release all
+  ListIterator<Tuple> releaseIter = release.listIterator();
+  while (releaseIter.hasNext()) {
+    Tuple t = releaseIter.next();
+    for (Note n : notes) {
+      if (n.channel == t.channel && n.pitch == t.pitch) {
+        println("Successfully released note");
+        n.dying = true;
+      }
+    }
+  }
+  release.clear();
   
   // add all waiting notes
   notes.addAll(notesToAdd);
@@ -61,18 +95,27 @@ void noteOn(int channel_, int pitch_, int velocity_) {
 void noteOff(int channel, int pitch, int velocity) { 
   // debug
   println("NOTE FINISHED PLAYING: " + channel + ", " + pitch + ", " + velocity);
-  // allow note to fade away after released
-  releaseNote(channel, pitch);
+  toRelease.add(new Tuple(channel, pitch));
 }
 
 // let note fade
 void releaseNote(int channel, int pitch) {
-  for (Note n : notes) {
-    if (n.channel == channel && n.pitch == pitch) {
-      println("Successfully released note");
-      n.dying = true;
-    }
-  }
+  //for (Note n : notes) {
+  //  if (n.channel == channel && n.pitch == pitch) {
+  //    println("Successfully released note");
+  //    n.dying = true;
+  //  }
+  //}
+  
+  //ListIterator<Note> iter = notes.listIterator();
+  //while (iter.hasNext()) {
+  //  Note n = iter.next();
+  //  if (n.channel == channel && n.pitch == pitch) {
+  //    println("Successfully released note");
+  //    n.dying = true;
+  //  }
+  //}
+  
 }
 
 void controllerChange(int channel, int number, int value) {
@@ -87,4 +130,14 @@ void controllerChange(int channel, int number, int value) {
 void delay(int time) {
   int current = millis();
   while (millis () < current+time) Thread.yield();
+}
+
+// store channel, pitch values easily
+class Tuple {
+  int channel, pitch;
+  
+  Tuple(int c, int p) {
+    this.channel = c;
+    this.pitch = p;
+  }
 }
