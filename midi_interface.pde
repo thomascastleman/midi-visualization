@@ -7,10 +7,15 @@ int channel;
 int pitch;
 int velocity;
 
-int minPitch = 36;
-int maxPitch = 96;
+//// at school keyboard
+//int minPitch = 36;
+//int maxPitch = 96;
 
-int maximumAge = 20;  // num frames each note gets
+// my ypg-625:
+int minPitch = 21;
+int maxPitch = 108;
+
+int maximumAge = 100;  // num frames each note gets
 ArrayList<Note> notes = new ArrayList<Note>();  // all note objects
 ArrayList<Note> notesToAdd = new ArrayList<Note>(); // all notes that currently need to be added to notes
 
@@ -31,40 +36,31 @@ void setup() {
 void draw() {
   background(0);
   
-  ListIterator<Note> iter = notes.listIterator();
+  notes.addAll(notesToAdd);
+  notesToAdd.clear();
   
+  ListIterator<Note> iter = notes.listIterator();
   while (iter.hasNext()) {
     Note n = iter.next();
+    
+    n.update();
+    n.display();
     
     if (n.age == n.maxAge) {
       iter.remove();
     }
   }
   
+  //notes.addAll(notesToAdd);
+  //notesToAdd.clear();
   
-  ArrayList<Note> extra = new ArrayList<Note>();
-  
-  notes.addAll(notesToAdd);
-  notesToAdd.clear();
-  
-  iter = notes.listIterator();
-  // update and display all notes
-  while (iter.hasNext()) {
-    Note n = iter.next();
-    n.update();
-    n.display();
-    
-    if (notesToAdd.size() > 0) {
-      for (Note note : notesToAdd) {
-        note.display();
-        iter.add(note);
-        extra.add(note);
-      }
-      notesToAdd.clear();
-    }
-  }
-  notes.addAll(extra);
-  extra.clear();
+  //iter = notes.listIterator();
+  //// update and display all notes
+  //while (iter.hasNext()) {
+  //  Note n = iter.next();
+  //  n.update();
+  //  n.display();
+  //}
 
 }
 
@@ -80,21 +76,25 @@ void noteOn(int channel_, int pitch_, int velocity_) {
   
   println("NOTE PLAYED WITH PITCH " + pitch_ + " AND VELOCITY " + velocity_);
   
-  channel = channel_;
-  pitch = pitch_;
-  velocity = velocity_;
-  
   // construct new note and add to currently displayed notes
-  Note n = new Note(0, maximumAge, velocity, (int) random(width), (int) random(height));
+  Note n = new Note(channel_, pitch_, velocity_, (int) random(width), (int) random(height));
   notesToAdd.add(n);
   //notes.add(n);
 }
 
 void noteOff(int channel, int pitch, int velocity) { 
-  println("NOTE FINISHED PLAYING");
-  channel = 0;
-  pitch = 0;
-  velocity = 0;
+  println("NOTE FINISHED PLAYING: " + channel + ", " + pitch + ", " + velocity);
+  releaseNote(channel, pitch);
+}
+
+void releaseNote(int channel, int pitch) {
+  for (Note n : notes) {
+    if (n.channel == channel && n.pitch == pitch) {
+      println("Successfully released note");
+      n.dying = true;
+      // break;
+    }
+  }
 }
 
 void controllerChange(int channel, int number, int value) {
