@@ -32,6 +32,7 @@ boolean randomPlacement = false;  // are notes randomly placed?
 boolean risingEffect = true;    // do notes rise after release?
 boolean ellipseRepresentation = false;  // notes represented by ellipses
 boolean showConnections = false;
+boolean holding = false;
 
 void setup() {
   size(700, 700);
