@@ -14,9 +14,9 @@ class Note {
   int channel, velocity, pitch;
   PVector position;
   boolean dying = false;
-  color displayColor = color(0, 200, 200);
+  color displayColor;
   
-  Note(int channel_, int pitch_, int velocity_, int x_, int y_) {
+  Note(int channel_, int pitch_, int velocity_, float x_, float y_) {
     this.channel = channel_;
     this.pitch = pitch_;
     this.velocity = velocity_;
@@ -25,8 +25,10 @@ class Note {
     this.position = new PVector(x_, y_);
     this.size = velocity_;  // size is velocity
     
-    // scale velocity from 0-100 to 5-55 (arbitrarily)
+    // scale velocity from 0-100 to 20-120 (arbitrarily) (this determines # frames note takes to fade)
     this.maxAge = (int) ((float) velocity_ / 100.0f) * 100 + 20;
+    
+    this.displayColor = scalePitchToColor(this.pitch);
   }
   
   // update note age and features
@@ -39,7 +41,7 @@ class Note {
   // display node on canvas
   void display() {
     // fade graphic as dying
-    float alpha = scaleVal(this.age, 0, this.maxAge, 255, 0);
+    float alpha = scaleVal((float) this.age, 0, this.maxAge, 255, 0);
     fill(this.displayColor, alpha); 
     ellipse(this.position.x, this.position.y, this.size, this.size);
   }
