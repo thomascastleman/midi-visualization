@@ -16,6 +16,7 @@ class Note {
   boolean dying = false;
   color displayColor;
   TriangleDeltas tDeltas;
+  Note previous;
   
   Note(int channel_, int pitch_, int velocity_, float x_, float y_) {
     this.channel = channel_;
@@ -29,8 +30,7 @@ class Note {
     // scale velocity to a lifespan (arbitrarily) (this determines # frames note takes to fade)
     this.maxAge = (int) ((float) velocity_ / 100.0f) * 100 + minimumFrameLifeSpan;
     
-    this.displayColor = scalePitchToColor(this.pitch);
-    
+    this.displayColor = scalePitchToColor(this.pitch);   
     
     if (!ellipseRepresentation) {
       // INIT RANDOM DELTAS
@@ -73,9 +73,20 @@ class Note {
       
       triangle(v1.x, v1.y, v2.x, v2.y, v3.x, v3.y);
     }
+    
+    if (showConnections) {
+      if (this.previous != null && this.previous.age < this.previous.maxAge) {
+        stroke(this.displayColor, alpha);
+        strokeWeight(3);
+        line(this.position.x, this.position.y, this.previous.position.x, this.previous.position.y);
+        strokeWeight(1);
+        stroke(bgColor);
+      } 
+    }
   }
 }
 
+// store deltas for triangle easily
 class TriangleDeltas {
   PVector delta1, delta2, delta3;
   

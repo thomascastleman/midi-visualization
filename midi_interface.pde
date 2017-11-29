@@ -16,35 +16,36 @@ int pitchRange = MAXPITCH - MINPITCH;  // range of pitch values
 // NOTE HANDLING STRUCTURES:
 ArrayList<Note> notes = new ArrayList<Note>();  // all note objects
 ArrayList<Note> notesToAdd = new ArrayList<Note>(); // all notes that currently need to be added to notes
-
-ArrayList<Tuple> release = new ArrayList<Tuple>();  // note values currezntly being released
+ArrayList<Tuple> release = new ArrayList<Tuple>();  // note values currently being released
 ArrayList<Tuple> toRelease = new ArrayList<Tuple>(); // note values (channel, pitch...) waiting to be released
+Note previousNote; // the last note object that was played
 
 // GRAPHICAL VARIABLES:
-int minimumFrameLifeSpan = 100;  // minimum # frames each note will take to fade
-int rateOfAscent = 2;  
+int minimumFrameLifeSpan = 60;  // minimum # frames each note will take to fade
+int rateOfAscent = 2;  // rate at which notes rise if risingEffect enabled
 int colorCycles = 2;  // number of cycles in the rainbow scale used to color notes
-float triangleScale = 1.25;  // all triangle deltas multiplied scaled by this value
+float triangleScale = 1.2;  // all triangle deltas multiplied scaled by this value
+color bgColor = color(0);
 
 // EFFECTS:
 boolean randomPlacement = false;  // are notes randomly placed?
-boolean risingEffect = false;    // do notes rise after release?
+boolean risingEffect = true;    // do notes rise after release?
 boolean ellipseRepresentation = false;  // notes represented by ellipses
-
+boolean showConnections = false;
 
 
 void setup() {
-  size(700, 700);
-  // fullScreen();
-  background(0);
-  fill(0, 100, 200);
+  //size(700, 700);
+  fullScreen();
+  background(bgColor);
+  
 
   MidiBus.list(); // List all available Midi devices
   bus = new MidiBus(this, 0, 3); // init MidiBus
 }
 
 void draw() {
-  background(0);
+  background(bgColor);
   
   // add all waiting releases
   release.addAll(toRelease);
@@ -79,7 +80,6 @@ void draw() {
       iter.remove();
     }
   }
-  
 }
 
 void noteOn(int channel_, int pitch_, int velocity_) {
@@ -96,6 +96,11 @@ void noteOn(int channel_, int pitch_, int velocity_) {
     n = new Note(channel_, pitch_, velocity_, (int) scaleVal((float) pitch_, MINPITCH, MAXPITCH, 0, width), height / 2);
   }
   notesToAdd.add(n);
+  
+  if (showConnections) {
+    n.previous = previousNote;
+    previousNote = n;
+  }
 }
 
 void noteOff(int channel, int pitch, int velocity) { 
