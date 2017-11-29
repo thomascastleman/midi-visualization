@@ -30,12 +30,12 @@ color bgColor = color(0);
 // EFFECTS:
 boolean randomPlacement = false;  // are notes randomly placed?
 boolean risingEffect = true;    // do notes rise after release?
-boolean ellipseRepresentation = false;  // notes represented by ellipses
-boolean showConnections = false;
-
+boolean ellipseRepresentation = true;  // notes represented by ellipses
+boolean showConnections = true;
+boolean holding = true;  // hold notes on screen
 
 void setup() {
-  //size(700, 700);
+  // size(700, 700);
   fullScreen();
   background(bgColor);
   

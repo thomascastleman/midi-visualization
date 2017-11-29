@@ -51,9 +51,13 @@ class Note {
   void update() {
     if (this.dying) {
       this.age++;
-      if (risingEffect) {
+      if (risingEffect & holding) {
         this.position.y -= rateOfAscent;
       }
+      
+    }
+    if (risingEffect & !holding) {
+        this.position.y -= rateOfAscent;
     }
   }
   
@@ -62,6 +66,7 @@ class Note {
     // fade graphic as dying
     float alpha = scaleVal((float) this.age, 0, this.maxAge, 255, 0);
     fill(this.displayColor, alpha);
+    noStroke();
     
     if (ellipseRepresentation) {
       ellipse(this.position.x, this.position.y, this.size, this.size);
