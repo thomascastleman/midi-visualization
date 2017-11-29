@@ -11,14 +11,23 @@ MidiBus bus; // The MidiBus
 int minPitch = 21;
 int maxPitch = 108;
 
-// range of pitch values
-int pitchRange = maxPitch - minPitch;
+int pitchRange = maxPitch - minPitch;  // range of pitch values
 
 ArrayList<Note> notes = new ArrayList<Note>();  // all note objects
 ArrayList<Note> notesToAdd = new ArrayList<Note>(); // all notes that currently need to be added to notes
 
 ArrayList<Tuple> release = new ArrayList<Tuple>();  // note values currezntly being released
 ArrayList<Tuple> toRelease = new ArrayList<Tuple>(); // note values (channel, pitch...) waiting to be released
+
+
+
+int minimumFrameLifeSpan = 70;  // minimum # frames each note will take to fade
+int colorCycles = 2;  // number of cycles in the rainbow scale used to color notes
+
+// EFFECTS:
+boolean randomPlacement = false;  // are notes randomly placed?
+boolean risingEffect = false;    // do notes rise after release?
+
 
 
 void setup() {
@@ -46,7 +55,7 @@ void draw() {
     Tuple t = releaseIter.next();
     for (Note n : notes) {
       if (n.channel == t.channel && n.pitch == t.pitch) {
-        println("Successfully released note");
+        // println("Successfully released note");
         n.dying = true;
       }
     }
@@ -74,31 +83,34 @@ void draw() {
 
 void noteOn(int channel_, int pitch_, int velocity_) {
   // debug
-  println("NOTE PLAYED WITH PITCH " + pitch_ + " AND VELOCITY " + velocity_);
+  // println("NOTE PLAYED WITH PITCH " + pitch_ + " AND VELOCITY " + velocity_);
   
-  // construct new note @ random position and add to waiting queue of notes to be added to global list
-  Note n = new Note(channel_, pitch_, velocity_, (int) random(width), (int) random(height));
-  
-  //Note n = new Note(channel_, pitch_, velocity_, currentPos.x, currentPos.y);
-  //changePosition();
-  
+  // construct new note and add to waiting queue of notes to be added to global list
+  Note n;
+  if (randomPlacement) {
+    // @ random position
+    n = new Note(channel_, pitch_, velocity_, (int) random(width), (int) random(height));
+  } else {
+    // @ pitch scaled to screen dimensions
+    n = new Note(channel_, pitch_, velocity_, (int) scaleVal((float) pitch_, minPitch, maxPitch, 0, width), height / 2);
+  }
   notesToAdd.add(n);
 }
 
 void noteOff(int channel, int pitch, int velocity) { 
   // debug
-  println("NOTE FINISHED PLAYING: " + channel + ", " + pitch + ", " + velocity);
+  // println("NOTE FINISHED PLAYING: " + channel + ", " + pitch + ", " + velocity);
   toRelease.add(new Tuple(channel, pitch));
 }
 
-void controllerChange(int channel, int number, int value) {
-  println();
-  println("Controller Change:");
-  //println("--------");
-  //println("Channel:"+channel);
-  //println("Number:"+number);
-  //println("Value:"+value);
-}
+//void controllerChange(int channel, int number, int value) {
+//  //println();
+//  //println("Controller Change:");
+//  //println("--------");
+//  //println("Channel:"+channel);
+//  //println("Number:"+number);
+//  //println("Value:"+value);
+//}
 
 void delay(int time) {
   int current = millis();
@@ -112,7 +124,7 @@ float scaleVal(float value, int oldMin, int oldMax, int newMin, int newMax) {
 
 // scale pitch to a rainbow color value
 color scalePitchToColor(int pitch) {
-  float freq = (2 * (float) Math.PI) / pitchRange;
+  float freq = colorCycles * (2 * (float) Math.PI) / pitchRange;
   
   // scale between 0 and pitchRange
   int truePitch = pitch - minPitch;

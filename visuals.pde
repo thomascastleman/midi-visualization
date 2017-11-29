@@ -25,8 +25,8 @@ class Note {
     this.position = new PVector(x_, y_);
     this.size = velocity_;  // size is velocity
     
-    // scale velocity from 0-100 to 20-120 (arbitrarily) (this determines # frames note takes to fade)
-    this.maxAge = (int) ((float) velocity_ / 100.0f) * 100 + 20;
+    // scale velocity to a lifespan (arbitrarily) (this determines # frames note takes to fade)
+    this.maxAge = (int) ((float) velocity_ / 100.0f) * 100 + minimumFrameLifeSpan;
     
     this.displayColor = scalePitchToColor(this.pitch);
   }
@@ -35,6 +35,9 @@ class Note {
   void update() {
     if (this.dying) {
       this.age++;
+      if (risingEffect) {
+        this.position.y -= 3;
+      }
     }
   }
   
