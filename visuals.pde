@@ -36,12 +36,12 @@ class Note {
       // INIT RANDOM DELTAS
       float dx1, dy1, dx2, dy2, dx3, dy3;
       
-      dx1 = random((float) -velocity, (float) velocity);
-      dy1 = random((float) -velocity, (float) velocity);
-      dx2 = random((float) -velocity, (float) velocity);
-      dy2 = random((float) -velocity, (float) velocity);
-      dx3 = random((float) -velocity, (float) velocity);
-      dy3 = random((float) -velocity, (float) velocity);
+      dx1 = triangleScale * random((float) -velocity, (float) velocity);
+      dy1 = triangleScale * random((float) -velocity, (float) velocity);
+      dx2 = triangleScale * random((float) -velocity, (float) velocity);
+      dy2 = triangleScale * random((float) -velocity, (float) velocity);
+      dx3 = triangleScale * random((float) -velocity, (float) velocity);
+      dy3 = triangleScale * random((float) -velocity, (float) velocity);
       
       this.tDeltas = new TriangleDeltas(dx1, dy1, dx2, dy2, dx3, dy3);
     }

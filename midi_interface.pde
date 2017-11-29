@@ -13,35 +13,34 @@ int MAXPITCH = 108;
 
 int pitchRange = MAXPITCH - MINPITCH;  // range of pitch values
 
+// NOTE HANDLING STRUCTURES:
 ArrayList<Note> notes = new ArrayList<Note>();  // all note objects
 ArrayList<Note> notesToAdd = new ArrayList<Note>(); // all notes that currently need to be added to notes
 
 ArrayList<Tuple> release = new ArrayList<Tuple>();  // note values currezntly being released
 ArrayList<Tuple> toRelease = new ArrayList<Tuple>(); // note values (channel, pitch...) waiting to be released
 
-
-
+// GRAPHICAL VARIABLES:
 int minimumFrameLifeSpan = 100;  // minimum # frames each note will take to fade
 int rateOfAscent = 2;  
 int colorCycles = 2;  // number of cycles in the rainbow scale used to color notes
+float triangleScale = 1.25;  // all triangle deltas multiplied scaled by this value
 
 // EFFECTS:
 boolean randomPlacement = false;  // are notes randomly placed?
-boolean risingEffect = true;    // do notes rise after release?
-boolean ellipseRepresentation = true;  // notes represented by ellipses
+boolean risingEffect = false;    // do notes rise after release?
+boolean ellipseRepresentation = false;  // notes represented by ellipses
 
 
 
 void setup() {
-  //size(700, 700);
-  fullScreen();
+  size(700, 700);
+  // fullScreen();
   background(0);
   fill(0, 100, 200);
 
   MidiBus.list(); // List all available Midi devices
   bus = new MidiBus(this, 0, 3); // init MidiBus
-  
-  // noLoop();
 }
 
 void draw() {
@@ -103,20 +102,6 @@ void noteOff(int channel, int pitch, int velocity) {
   // debug
   // println("NOTE FINISHED PLAYING: " + channel + ", " + pitch + ", " + velocity);
   toRelease.add(new Tuple(channel, pitch));
-}
-
-//void controllerChange(int channel, int number, int value) {
-//  //println();
-//  //println("Controller Change:");
-//  //println("--------");
-//  //println("Channel:"+channel);
-//  //println("Number:"+number);
-//  //println("Value:"+value);
-//}
-
-void delay(int time) {
-  int current = millis();
-  while (millis () < current+time) Thread.yield();
 }
 
 // scale value from one range to another
