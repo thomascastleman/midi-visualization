@@ -7,7 +7,7 @@ MidiBus bus; // The MidiBus
 //int MINPITCH = 36;
 //int MAXPITCH = 96;
 
-// my ypg-625:
+// my ypg-625 and at-school yamaha
 int MINPITCH = 21;
 int MAXPITCH = 108;
 
@@ -24,26 +24,28 @@ Note previousNote; // the last note object that was played
 int minimumFrameLifeSpan = 60;  // minimum # frames each note will take to fade
 int rateOfAscent = 2;  // rate at which notes rise if risingEffect enabled
 int colorCycles = 2;  // number of cycles in the rainbow scale used to color notes
-float triangleScale = 1.2;  // all triangle deltas multiplied scaled by this value
-color bgColor = color(0);
+float triangleScale = 1.7;  // all triangle deltas multiplied scaled by this value
+color bgColor = color(0);  // background color
+float releaseDirScale = 0.1;  // scale of release direction vectors (need to scale down so not so aggressively fast)
 
 // EFFECTS:
 boolean randomPlacement = false;  // are notes randomly placed?
 boolean risingEffect = true;    // do notes rise after release?
-boolean ellipseRepresentation = false;  // notes represented by ellipses
-boolean showConnections = false;
-boolean holding = false;
+boolean ellipseRepresentation = true;  // notes represented by ellipses
+boolean showConnections = true;  // link note to previous
+boolean holding = true;  // hold notes on screen for as long as they are held
+boolean randomRelease = true;  // release notes in random directions
 
 void setup() {
-  size(700, 700);
-  // fullScreen();
+  // size(700, 700);
+  fullScreen();
   background(bgColor);
   
 
   MidiBus.list(); // List all available Midi devices
   bus = new MidiBus(this, 0, 3); // init MidiBus
 
-  noLoop();
+  // noLoop();
 }
 
 void draw() {

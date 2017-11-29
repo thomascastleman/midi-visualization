@@ -17,6 +17,7 @@ class Note {
   color displayColor;
   TriangleDeltas tDeltas;
   Note previous;
+  PVector releaseDirection;  // direction of release
   
   Note(int channel_, int pitch_, int velocity_, float x_, float y_) {
     this.channel = channel_;
@@ -27,6 +28,8 @@ class Note {
     this.position = new PVector(x_, y_);
     this.size = velocity_;  // size is velocity
     
+    this.releaseDirection = new PVector(releaseDirScale * random(-this.velocity, this.velocity), releaseDirScale * random(-this.velocity, this.velocity));
+    
     // scale velocity to a lifespan (arbitrarily) (this determines # frames note takes to fade)
     this.maxAge = (int) ((float) velocity_ / 100.0f) * 100 + minimumFrameLifeSpan;
     
@@ -36,12 +39,12 @@ class Note {
       // INIT RANDOM DELTAS
       float dx1, dy1, dx2, dy2, dx3, dy3;
       
-      dx1 = triangleScale * random((float) -velocity, (float) velocity);
-      dy1 = triangleScale * random((float) -velocity, (float) velocity);
-      dx2 = triangleScale * random((float) -velocity, (float) velocity);
-      dy2 = triangleScale * random((float) -velocity, (float) velocity);
-      dx3 = triangleScale * random((float) -velocity, (float) velocity);
-      dy3 = triangleScale * random((float) -velocity, (float) velocity);
+      dx1 = triangleScale * random((float) -this.velocity, (float) this.velocity);
+      dy1 = triangleScale * random((float) -this.velocity, (float) this.velocity);
+      dx2 = triangleScale * random((float) -this.velocity, (float) this.velocity);
+      dy2 = triangleScale * random((float) -this.velocity, (float) this.velocity);
+      dx3 = triangleScale * random((float) -this.velocity, (float) this.velocity);
+      dy3 = triangleScale * random((float) -this.velocity, (float) this.velocity);
       
       this.tDeltas = new TriangleDeltas(dx1, dy1, dx2, dy2, dx3, dy3);
     }
@@ -52,12 +55,20 @@ class Note {
     if (this.dying) {
       this.age++;
       if (risingEffect & holding) {
-        this.position.y -= rateOfAscent;
+        if (randomRelease) {
+          this.position.add(this.releaseDirection);
+        } else {
+          this.position.y -= rateOfAscent;
+        }
       }
-      
     }
     if (risingEffect & !holding) {
-        this.position.y -= rateOfAscent;
+        if (randomRelease) {
+          this.position.add(this.releaseDirection);
+        } else {
+          
+          this.position.y -= rateOfAscent;
+        }
     }
   }
   
