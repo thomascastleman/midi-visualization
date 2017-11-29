@@ -33,15 +33,16 @@ boolean risingEffect = true;    // do notes rise after release?
 boolean ellipseRepresentation = false;  // notes represented by ellipses
 boolean showConnections = false;
 
-
 void setup() {
-  //size(700, 700);
-  fullScreen();
+  size(700, 700);
+  // fullScreen();
   background(bgColor);
   
 
   MidiBus.list(); // List all available Midi devices
   bus = new MidiBus(this, 0, 3); // init MidiBus
+
+  noLoop();
 }
 
 void draw() {
