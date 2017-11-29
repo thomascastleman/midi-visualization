@@ -29,10 +29,10 @@ color bgColor = color(0);  // background color
 float releaseDirScale = 0.1;  // scale of release direction vectors (need to scale down so not so aggressively fast)
 
 // EFFECTS:
-boolean randomPlacement = false;  // are notes randomly placed?
-boolean risingEffect = true;    // do notes rise after release?
-boolean ellipseRepresentation = true;  // notes represented by ellipses
-boolean showConnections = true;  // link note to previous
+boolean randomPlacement = true;  // are notes randomly placed?
+boolean risingEffect = false;    // do notes rise after release?
+boolean ellipseRepresentation = false;  // notes represented by ellipses
+boolean showConnections = false;  // link note to previous
 boolean holding = true;  // hold notes on screen for as long as they are held
 boolean randomRelease = true;  // release notes in random directions
 
