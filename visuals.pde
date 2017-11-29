@@ -15,6 +15,7 @@ class Note {
   PVector position;
   boolean dying = false;
   color displayColor;
+  TriangleDeltas tDeltas;
   
   Note(int channel_, int pitch_, int velocity_, float x_, float y_) {
     this.channel = channel_;
@@ -29,6 +30,21 @@ class Note {
     this.maxAge = (int) ((float) velocity_ / 100.0f) * 100 + minimumFrameLifeSpan;
     
     this.displayColor = scalePitchToColor(this.pitch);
+    
+    
+    if (!ellipseRepresentation) {
+      // INIT RANDOM DELTAS
+      float dx1, dy1, dx2, dy2, dx3, dy3;
+      
+      dx1 = random((float) -velocity, (float) velocity);
+      dy1 = random((float) -velocity, (float) velocity);
+      dx2 = random((float) -velocity, (float) velocity);
+      dy2 = random((float) -velocity, (float) velocity);
+      dx3 = random((float) -velocity, (float) velocity);
+      dy3 = random((float) -velocity, (float) velocity);
+      
+      this.tDeltas = new TriangleDeltas(dx1, dy1, dx2, dy2, dx3, dy3);
+    }
   }
   
   // update note age and features
@@ -36,7 +52,7 @@ class Note {
     if (this.dying) {
       this.age++;
       if (risingEffect) {
-        this.position.y -= 3;
+        this.position.y -= rateOfAscent;
       }
     }
   }
@@ -45,7 +61,29 @@ class Note {
   void display() {
     // fade graphic as dying
     float alpha = scaleVal((float) this.age, 0, this.maxAge, 255, 0);
-    fill(this.displayColor, alpha); 
-    ellipse(this.position.x, this.position.y, this.size, this.size);
+    fill(this.displayColor, alpha);
+    
+    if (ellipseRepresentation) {
+      ellipse(this.position.x, this.position.y, this.size, this.size);
+    } else {
+      // get all vertices
+      PVector v1 = new PVector(this.position.x + this.tDeltas.delta1.x, this.position.y + this.tDeltas.delta1.y);
+      PVector v2 = new PVector(this.position.x + this.tDeltas.delta2.x, this.position.y + this.tDeltas.delta2.y);
+      PVector v3 = new PVector(this.position.x + this.tDeltas.delta3.x, this.position.y + this.tDeltas.delta3.y);
+      
+      triangle(v1.x, v1.y, v2.x, v2.y, v3.x, v3.y);
+    }
   }
+}
+
+class TriangleDeltas {
+  PVector delta1, delta2, delta3;
+  
+  TriangleDeltas(float dx1, float dy1, float dx2, float dy2, float dx3, float dy3) {
+    this.delta1 = new PVector(dx1, dy1);
+    this.delta2 = new PVector(dx2, dy2);
+    this.delta3 = new PVector(dx3, dy3);
+    
+  }
+  
 }

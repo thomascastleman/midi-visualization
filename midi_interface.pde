@@ -21,17 +21,19 @@ ArrayList<Tuple> toRelease = new ArrayList<Tuple>(); // note values (channel, pi
 
 
 
-int minimumFrameLifeSpan = 70;  // minimum # frames each note will take to fade
+int minimumFrameLifeSpan = 100;  // minimum # frames each note will take to fade
+int rateOfAscent = 2;  
 int colorCycles = 2;  // number of cycles in the rainbow scale used to color notes
 
 // EFFECTS:
 boolean randomPlacement = false;  // are notes randomly placed?
-boolean risingEffect = false;    // do notes rise after release?
+boolean risingEffect = true;    // do notes rise after release?
+boolean ellipseRepresentation = true;  // notes represented by ellipses
 
 
 
 void setup() {
-  // size(700, 700);
+  //size(700, 700);
   fullScreen();
   background(0);
   fill(0, 100, 200);
