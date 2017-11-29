@@ -4,14 +4,14 @@ import java.util.*;
 MidiBus bus; // The MidiBus
 
 //// at school keyboard
-//int minPitch = 36;
-//int maxPitch = 96;
+//int MINPITCH = 36;
+//int MAXPITCH = 96;
 
 // my ypg-625:
-int minPitch = 21;
-int maxPitch = 108;
+int MINPITCH = 21;
+int MAXPITCH = 108;
 
-int pitchRange = maxPitch - minPitch;  // range of pitch values
+int pitchRange = MAXPITCH - MINPITCH;  // range of pitch values
 
 ArrayList<Note> notes = new ArrayList<Note>();  // all note objects
 ArrayList<Note> notesToAdd = new ArrayList<Note>(); // all notes that currently need to be added to notes
@@ -92,7 +92,7 @@ void noteOn(int channel_, int pitch_, int velocity_) {
     n = new Note(channel_, pitch_, velocity_, (int) random(width), (int) random(height));
   } else {
     // @ pitch scaled to screen dimensions
-    n = new Note(channel_, pitch_, velocity_, (int) scaleVal((float) pitch_, minPitch, maxPitch, 0, width), height / 2);
+    n = new Note(channel_, pitch_, velocity_, (int) scaleVal((float) pitch_, MINPITCH, MAXPITCH, 0, width), height / 2);
   }
   notesToAdd.add(n);
 }
@@ -127,7 +127,7 @@ color scalePitchToColor(int pitch) {
   float freq = colorCycles * (2 * (float) Math.PI) / pitchRange;
   
   // scale between 0 and pitchRange
-  int truePitch = pitch - minPitch;
+  int truePitch = pitch - MINPITCH;
   
   // calc rgb values using out of phase waves
   float r = scaleVal((float) Math.cos(truePitch * freq), -1, 1, 0, 255);
